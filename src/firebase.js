@@ -1,9 +1,9 @@
-import firebase from "firebase";
+import firebase from 'firebase';
 
 const firebaseApp = firebase.initializeApp({
         apiKey: "AIzaSyDRMlTjwIbVQP72ZAyvUr5v6P4Uh3ZL-OY",
         authDomain: "todo-app-24650.firebaseapp.com",
-        databaseURL: "https://todo-app.firebaseio.com",
+        databaseURL: "https://todo-app-24650.firebaseio.com",
         projectId: "todo-app-24650",
         storageBucket: "todo-app-24650.appspot.com",
         messagingSenderId: "868511197819",
@@ -11,6 +11,6 @@ const firebaseApp = firebase.initializeApp({
         measurementId: "G-19MC3F2EZY"
 });
 
-const db = firebaseApp.filestore();
+const db = firebaseApp.firestore();
 
 export default db;

@@ -1,10 +1,10 @@
 import React from 'react';
-import '/Todo.css';
-import {Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
+import './Todo.css';
+import {List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 
 function Todo(props) {
   return (
-    <List>
+    <List className= "todo_list">
         <ListItemAvatar>
           
         </ListItemAvatar>

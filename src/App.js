@@ -1,29 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import {Button, FormControl, Input, InputLabel } from '@material-ui/core';
 import Todo from './Todo';
 import './App.css';
 import db from './firebase';
+import firebase from 'firebase';
+
 
 function App() {
-  const [todos, setTodos] = useState(['abc' , 'def']);
+  const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
    // console.log(input);
 
-   //When app loads we need to listen to the database and fetch new todos as they gets added / removed
-  useEffect(() => { 
-  //This code here fires when the  app.js loads (function, dependencies)
+   // when the app loads, we need to listen to database and then we get some data using fetch, 
+  useEffect(() => {
+    //this code fires when app.js loaded
+    db.collection('todos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+       //console.log(snapshot.docs.map(doc => doc.data().todo));
+         setTodos(snapshot.docs.map(doc => doc.data().todo))
+    })
+  }, [])
 
-  db.collection('todos').onSnapshot(snapshot => {
-  console.log(snapshot.docs.map(doc => doc.data().todo));
-   //console.log();
-   //setTodos(snapshot.docs.map(doc => doc.data().todo)) // map array to atray of objects
-   })
-  }, []);
+    
 
   const addTodo = (event) => {
-    event.preventDefault(); //will stop the refreshing
+    event.preventDefault(); //will stop the refreshing when everytime form submitted
     //console.log("Im working!");
-    setTodos([...todos, input]); //appending action
+
+    db.collection('todos').add({
+      todo : input, // It will create a differenr id for each todo object
+      timestamp : firebase.firestore.FieldValue.serverTimestamp() //set the firebase timestamp(consistence) as every country has differnt time zone
+    })
+    //setTodos([...todos, input]);
     setInput(''); // This will clear the input space up 
   }
 
