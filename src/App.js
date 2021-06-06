@@ -1,60 +1,62 @@
-import { useState, useEffect} from 'react';
-import {Button, FormControl, Input, InputLabel } from '@material-ui/core';
-import Todo from './Todo';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import { Button, FormControl, InputLabel, Input, FormHelperText } from '@material-ui/core';
+import Todo from './Todo';
 import db from './firebase';
-import firebase from 'firebase';
+import firebase from "firebase"
 
 
 function App() {
-  const [todos, setTodos] = useState([]);
-  const [input, setInput] = useState('');
-   // console.log(input);
+  const [todos, setTodos] = useState([])
+  const [input, setInput] = useState("")
 
-   // when the app loads, we need to listen to database and then we get some data using fetch, 
+  // when the app loads, we need to listen to database and then we get some data using fetch, 
   useEffect(() => {
-    //this code fires when app.js loaded
-    db.collection('todos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-       //console.log(snapshot.docs.map(doc => doc.data().todo));
-         setTodos(snapshot.docs.map(doc => doc.data().todo))
-    })
-  }, [])
+  //this code fires when app.js loaded
+  db.collection('todos').orderBy("timestamp", "desc").onSnapshot(snapshot => {
+    // console.log(snapshot.docs.map(doc => doc.data().todos))
+    // console.log(snapshot.docs.map(doc => doc.data()))
+    setTodos(snapshot.docs.map(doc => ({ id:doc.id, todo: doc.data().todo})))
+  })}, [])
 
+  // Function on button add TODo
+  const addTodo = (Event) => {
+    // preventing default nature of form of refresh
+    Event.preventDefault();
     
-
-  const addTodo = (event) => {
-    event.preventDefault(); //will stop the refreshing when everytime form submitted
-    //console.log("Im working!");
-
     db.collection('todos').add({
-      todo : input, // It will create a differenr id for each todo object
-      timestamp : firebase.firestore.FieldValue.serverTimestamp() //set the firebase timestamp(consistence) as every country has differnt time zone
+      todo: input,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
-    //setTodos([...todos, input]);
-    setInput(''); // This will clear the input space up 
+
+    // to remove the entered words from input after clicking button
+    setInput("");
   }
+
+
 
   return (
     <div className="App">
-      <h1>Hello World!</h1>
-      <form>
-      <FormControl>
-      <InputLabel>✅ Write a todo</InputLabel>
-      <Input value={input} onChange={event => setInput(event.target.value)} />
-      </FormControl>
+      {/* Wraping up in form to make sure enter key will submiting the form  */}
+      <h1 className =  "App-header">Todo List </h1>
+      <form >
+        <FormControl>
+          <InputLabel><span role="img" aria-label="emoji">✅ </span> Write a Task</InputLabel>
+          <Input value={input} onChange={Event => setInput(Event.target.value)} />
+          <FormHelperText>We'll make you productive <span role="img" aria-label="emoji">🕒</span> </FormHelperText>
+        </FormControl>
 
-      <Button  disabled={!input} type="submit" onClick={addTodo} variant="contained" color="primary">
-       Add ToDo
-      </Button> 
-      {/*<button type="submit" onClick={addTodo} >Add ToDo</button>*/}
-
+        {/* using material ui */}
+        <Button disabled={!input} type="submit" variant="contained" color="primary" onClick={addTodo}>
+          Add Todo
+        </Button>
+        {/* <button onClick={addTodo}>Add Todo </button> */}
+      </form>
       <ul>
         {todos.map(todo => (
-          <Todo text={todo} />
-          //<li>{todo}</li>
+         <Todo todo={todo} />
         ))}
       </ul>
-      </form>
     </div>
   );
 }
